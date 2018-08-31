@@ -34,7 +34,7 @@ client.on('connect', function () {
   console.log("Waiting for messages...");
 
   // messages for testing
-  client.publish('say', 'Hello, I am a need finding machine');
+  client.publish('say', 'Alright I am up!');
 });
 
 // Print out the messages and say messages that are topic: "say"
@@ -55,13 +55,13 @@ client.on('message', function (topic, message) {
 //****************************************************************************//
 
 //********************** SIMULATED CAN DATA MESSAGES *************************//
-setInterval(function(){
+//setInterval(function(){
     //update with some random data every 200 ms
-    client.publish('can', '{"name":"vss", "value":' +
-      Math.floor(Math.random() * 90) +
-      '}')
-    client.publish('can', '{"name":"rpm", "value":' +
-      Math.floor(Math.random() * 6000) +
-      '}')
-}, 200);
+  //  client.publish('can', '{"name":"vss", "value":' +
+  //    Math.floor(Math.random() * 90) +
+  //    '}')
+  //  client.publish('can', '{"name":"rpm", "value":' +
+  //    Math.floor(Math.random() * 6000) +
+  //    '}')
+//},// 200);
 //****************************************************************************//

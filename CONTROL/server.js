@@ -14,6 +14,11 @@ that will the car will listen to.
 Usage: node server.js
 
 Notes: You will need to specify what MQTT server you would like to use.
+-------
+Adapted by David Goedicke
+
+PricicollID
+makingAssistant
 */
 
 
@@ -53,7 +58,7 @@ client.on('connect', function () {
   client.subscribe('can'); // CAN data
   client.subscribe('say'); // Messages to say
   console.log("Waiting for messages...");
-  client.publish('say', 'Hello, I am a need finding machine');
+  client.publish('say', 'Hello, I am a making Assistant');
 });
 
 // process the MQTT messages
