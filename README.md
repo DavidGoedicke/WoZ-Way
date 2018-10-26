@@ -1,3 +1,30 @@
+#Making Assistant adaptation
+
+
+```
+install mosquitto
+```
+edit the file ``/usr/local/etc/mosquitto/mosquitto.conf``
+add the port number as follows
+```conf
+# =================================================================
+# Default listener
+# =================================================================
+
+# IP address/hostname to bind the default listener to. If not
+# given, the default listener will not be bound to a specific
+# address and so will be accessible to all network interfaces.
+# bind_address ip-address/host name
+#bind_address
+
+# Port to use for the default listener.
+port 8134
+```
+then start the server: 
+```
+brew services start mosquitto
+```
+
 # WoZ-Way Hello World
 
 This project contains sample code for getting started sending messages back and
@@ -15,7 +42,7 @@ forth to the car using a wizard control interface.
 2. A computer with a modern web-browser
 
 ### Message Broker
-WoZ Way used MQTT, a popular publish/subscribe messaging protocol to communicate messages between the car and the control interface. This is done so that only the MQTT broker IP needs to be known. I use a popular and free MQTT broker called Mosquitto [https://mosquitto.org]. You can set up Mosquitto on a Unix based server fairly easily. 
+WoZ Way used MQTT, a popular publish/subscribe messaging protocol to communicate messages between the car and the control interface. This is done so that only the MQTT broker IP needs to be known. I use a popular and free MQTT broker called Mosquitto [https://mosquitto.org]. You can set up Mosquitto on a Unix based server fairly easily.
 
 ## Hardware Bill of Materials
 A full BOM can be found here: [https://docs.google.com/spreadsheets/d/115VWuHOhQsEnYNJsB6Nx3dnP3QcJT3YXV1De5LtsyNQ/edit?usp=sharing]
@@ -72,7 +99,5 @@ Nikolas Martelaro and Wendy Ju. 2017. WoZ Way: Enabling Real-time Remote Interac
  publisher = {ACM},
  address = {New York, NY, USA},
  keywords = {design methods, ethnography, interaction design, prototyping, wizard of oz},
-} 
+}
 ```
-
-

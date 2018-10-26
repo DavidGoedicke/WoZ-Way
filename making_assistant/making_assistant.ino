@@ -19,7 +19,10 @@ uint16_t lvl[FRAMES],           // Audio level for the prior #FRAMES frames
 uint8_t  lvlIdx = 0;            // Counter into lvl[] array
 int16_t  peak   = 0;            // Falling dot shows recent max
 int8_t   peakV  = 0;            // Velocity of peak dot
+int16_t  smoothPeak   = 0;
 
+int frameRateCounter;
+unsigned long frameRateTimer;
 char state = 'n';
 bool stateChange = true;
 unsigned long nextEvent;
@@ -72,54 +75,71 @@ gamma8[] = { // Gamma correction improves the appearance of midrange colors
 
 // LISTENING FUNCTION ----------------------
 unsigned long listening(int * state) {
- 
-  switch (*state) {
-    case 1:
-      CircuitPlayground.setPixelColor(0, 255,   0,   0);
-      *state= *state+1; //TODO:continue here DAVID
-      return 50;
 
-    case 2:
-      CircuitPlayground.setPixelColor(1, 128, 128,   0);
-      *state= *state+1;
-      return 50;
-    case 3:
-      CircuitPlayground.setPixelColor(2,   0, 255,   0);
-     *state= *state+1;
-      return 50;
-    case 4:
-      CircuitPlayground.setPixelColor(3,   0, 128, 128);
-     *state= *state+1;
-      return 50;
-    case 5:
-      CircuitPlayground.setPixelColor(4,   0,   0, 255);
-      *state = 1;
-      return 50;
+  if (*state == 1) {
+    for (int i = 0; i < 10; i++ ) {
+      CircuitPlayground.setPixelColor(i, 0,   0,   0);
+    }
+    *state = millis();
+    smoothPeak = scaled;
+    return 10;
   }
+  else {
+
+    float val = constrain(map((millis() - *state ) , 0, 1000, 0, 100), 0, 200);
+    smoothPeak = int(smoothPeak * 0.9 + scaled * 0.1);
+    val = constrain(map(smoothPeak + val, 0, 2560, 0, 150), 0, 255);
+
+    for (int i = 0; i < 10; i++) {
+      CircuitPlayground.setPixelColor(i, val,   val,   val);
+    }
+    return 1;
+  }
+
+
 }
 
 // THINKING FUNCTION - press right button ---------------------
 unsigned long thinking(int * state) {
-  switch (*state) {
-    case 1:
-      CircuitPlayground.clearPixels();
-      *state = 2;
-      return 500;
-    case 2:
-      CircuitPlayground.setPixelColor(0, 255,   0,   0);
-      CircuitPlayground.setPixelColor(1, 128, 128,   0);
-      CircuitPlayground.setPixelColor(2,   0, 255,   0);
-      CircuitPlayground.setPixelColor(3,   0, 128, 128);
-      CircuitPlayground.setPixelColor(4,   0,   0, 255);
+  int maxValue = 200;
 
-      CircuitPlayground.setPixelColor(5, 0xFF0000);
-      CircuitPlayground.setPixelColor(6, 0x808000);
-      CircuitPlayground.setPixelColor(7, 0x00FF00);
-      CircuitPlayground.setPixelColor(8, 0x008080);
-      CircuitPlayground.setPixelColor(9, 0x0000FF);
-      *state = 1;
-      return 500;
-  }
+  float val = map((millis() + 100) % 1000, 0, 1000, 0, 2 * PI);
+  CircuitPlayground.setPixelColor(0, map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue));
+
+  val = map((millis() + 200) % 1000, 0, 1000, 0, 2 * PI);
+  CircuitPlayground.setPixelColor(1, map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue));
+
+  val = map((millis() + 300) % 1000, 0, 1000, 0, 2 * PI);
+  CircuitPlayground.setPixelColor(2, map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue));
+  val = map((millis() + 400) % 1000, 0, 1000, 0, 2 * PI);
+  CircuitPlayground.setPixelColor(3, map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue));
+
+  val = map((millis() + 500) % 1000, 0, 1000, 0, 2 * PI);
+  CircuitPlayground.setPixelColor(4, map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue));
+
+  val = map((millis() + 600) % 1000, 0, 1000, 0, 2 * PI);
+  CircuitPlayground.setPixelColor(5, map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue));
+  val = map((millis() + 700) % 1000, 0, 1000, 0, 2 * PI);
+  CircuitPlayground.setPixelColor(6, map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue));
+
+  val = map((millis() + 800) % 1000, 0, 1000, 0, 2 * PI);
+  CircuitPlayground.setPixelColor(7, map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue));
+
+  val = map((millis() + 900) % 1000, 0, 1000, 0, 2 * PI);
+  CircuitPlayground.setPixelColor(8, map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue));
+  val = map((millis()) % 1000, 0, 1000, 0, 2 * PI);
+  CircuitPlayground.setPixelColor(9, map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue),  map(sin(val) * 1000, -1000, 1000, 0, maxValue));
+
+
+  return 1;
+
+}
+void idle(){
+  int val = int(constrain(map(sin(float(millis())/2000.0)*10000 , -10000, 10000, 4, 15), 4, 15));
+for (int i = 0; i < 10; i++) {
+      CircuitPlayground.setPixelColor(i, 3,3,val);
+    }
+
 }
 // LOOP FUNCTION - runs over and over - does animation ---------------------
 void loop() {
@@ -134,23 +154,24 @@ void loop() {
   buttonState = digitalRead(buttonPin);
 
   switch (state) {
-    case 'i':
-    if (stateChange) {
-        internalStateTracker = 1;
-        stateChange = false;
-    }
-    
-    break;
-    case 'l':
+    case 'i': //i like IDELING
       if (stateChange) {
         internalStateTracker = 1;
         stateChange = false;
-        nextEvent = millis() + 500; //inital delay for the think function
+      }
+      idle();
+
+      break;
+    case 'l': //l like LISTENING
+      if (stateChange) {
+        internalStateTracker = 1;
+        stateChange = false;
+        nextEvent = millis() + 10; //inital delay for the think function
       } if (nextEvent <= millis()) {
         nextEvent = listening(&internalStateTracker) + millis();
       }
       break;
-    case 't':
+    case 't': //t like THINKING
       if (stateChange) {
         internalStateTracker = 1;
         stateChange = false;
@@ -161,7 +182,7 @@ void loop() {
       }
       break;
 
-    case 'a':
+    case 'a':  //a like ANSWER or AUDIO
       if (stateChange) {
         internalStateTracker = 1;
         stateChange = false;
@@ -174,14 +195,36 @@ void loop() {
 
 
   }
+  postAudioProcessing();
+/* .  // uncomment this code to report the frame rate
+  if (frameRateTimer < millis()) {
+    frameRateCounter++;
+    Serial.println(frameRateCounter);
+    frameRateCounter = 0;
+    frameRateTimer = 1000 + millis();
+  } else {
+    frameRateCounter++;
+  }*/
 }
 
 
 
 
 // TALKING FUNCTION - press left button ---------------------
+void postAudioProcessing() {
+  peak += peakV; // maybe that needs in a post audio funtion
+  if (peak <= 0) {
+    peak  = 0;
+    peakV = 0;
+  } else if (peakV >= -126) {
+    peakV -= 2;
+  }
+
+  if (++lvlIdx >= FRAMES) lvlIdx = 0;
+
+}
 void audioprocessing() {
-  
+
   uint16_t minLvl, maxLvl, a;
   int16_t  p;
 
@@ -226,7 +269,7 @@ unsigned long talking() {
   int      whole2 = peak / 256,      // Index of peak pixel
            frac2  = peak & 255;      // Between-pixels position of peak
   uint16_t a1, a2;                   // Scaling factors for color blending
-uint8_t  i, r, g, b;
+  uint8_t  i, r, g, b;
   for ( i = 0; i < 10; i++) {         // For each NeoPixel...
     if (i <= whole) {                // In currently-lit area?
       r = pgm_read_byte(&reds[i]),   // Look up pixel color
@@ -262,14 +305,6 @@ uint8_t  i, r, g, b;
   }
   CircuitPlayground.strip.show();
 
-  peak += peakV; // maybe that needs in a post audio funtion 
-  if (peak <= 0) {
-    peak  = 0;
-    peakV = 0;
-  } else if (peakV >= -126) {
-    peakV -= 2;
-  }
 
-  if (++lvlIdx >= FRAMES) lvlIdx = 0;
   return 0;
 }

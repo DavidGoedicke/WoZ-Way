@@ -25,6 +25,7 @@ function sendOnEnter(){
 	}
 }
 
+
 function sendMsg(){
 	// get and send the messge to the remote interface
 	var msg = document.getElementById("message").value;

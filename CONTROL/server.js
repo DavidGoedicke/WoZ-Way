@@ -33,16 +33,32 @@ var serverPort = 8000;
 
 // MQTT messaging - specify the server you would like to use here
 var mqtt    = require('mqtt');
-var client  = mqtt.connect('mqtt://hri.stanford.edu',
+var client  = mqtt.connect('mqtt://127.0.0.1',
                            {port: 8134,
                             protocolId: 'MQIsdp',
                             protocolVersion: 3 });
+
+const SerialPort = require('serialport')
+const Readline = require('@serialport/parser-readline')
 //****************************************************************************//
 
 
 //****************************** WEB INTERFACE *******************************//
 // use express to create the simple webapp
 app.use(express.static('public'));		// find pages in public directory
+
+if(!process.argv[2]) {
+    console.error('Usage: node '+process.argv[1]+' SERIAL_PORT');
+    process.exit(1);
+}
+
+// initialize the serial port based on the user input
+const port = new SerialPort(process.argv[2])
+
+// create a parser so that we can easily handle the incoming data by reading the line
+const parser = port.pipe(new Readline({
+    delimiter: '\r\n'
+}))
 
 // start the server and say what port it is on
 server.listen(serverPort, function() {
@@ -98,4 +114,11 @@ io.on('connect', function(socket) {
         console.log('user disconnected');
     });
 });
+//****************************************************************************//
+
+//****************************v SERIAL PORT **********************************//
+parser.on('data', function(data) {
+    console.log('data:', data);
+    client.publish('anim', data);
+})
 //****************************************************************************//
